@@ -2,64 +2,43 @@
 <html lang="en">
 <head>
     <link href="style.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fancy To-Do List ;)</title>
+    <title>To-Do List</title>
 </head>
 <body>
-    <h2 id="add-task-header">Add a Task...</h2>
-<div id="form-div">
-    <form id="list-item-form">
-        <div class="center">
-            <label for="task-name">Task Name: </label>
-            <input id="task-name" type="text" name="task-name" placeholder="Enter a task..."/>
+    <h2 id="add-task-header">Add a Task</h2>
+    <div id="add-task-div">
+        <form id="add-task-form">
+            <div>
+                <label for="task-name">Task Name: </label>
+                <input id="task-name" type="text" name="task-name"/>
+            </div><br>
+            <div>
+                <label for="due-date">Due Date: </label>
+                <input id="due-date" type="date" name="due-date"/>
+            </div><br>
+            <div>
+                <label for = "priority">Priority: </label>
+                <select id="priority" name="priority">
+                <option value="3">Low</option>
+                <option value="2">Medium</option>
+                <option value="1">High</option>
+        </select> 
         </div><br>
-        <div class="center">
-            <label for="due-date">Due Date: </label>
-            <input id="due-date" type="date" name="due-date"/>
-        </div><br>
-        <div class="center">
-    <label for = "priority-dropdown">Priority Level: </label>
-      <select id ="priority" name = "priority">
-            <option value="3">Low</option>
-             <option value="2">Medium</option>
-             <option value="1">High</option>
-       </select> 
+        <div>
+            <input class="btn-2" id="submit-button" type="button" value="Submit" onclick="addTask()">
+            <div id="warning"></div>
+        </div>
+        </form>
+        
     </div><br>
-    <div class="center">
-        <input class="btn-2" id="submit-button" type="button" value="Submit" onclick="addTask()">
-        <div id="warning"></div>
-    </div>
-    </form>
-    
-</div>
 
-<h2 id="to-do-list-header">To-Do List</h2>
-<div id="task-table-div">
-    <table id="task-table">
-        <thead>
-            <tr id="header-row">
-                <th>Task</th>
-                <th>Due Date</th>
-                <th>Priority</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr></tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="contact-container">
-    <div class="container">
-      <div class="rect1"></div>
-      <div class="rect2"></div>
-       <div class="rect3"></div>
-      <div class="rect4"></div>
-      <div class="rect5"></div>
-    </div>
+    <h2 id="to-do-list-header">To-Do List</h2>
+    <div id="task-list-div">
+        <ul id="task-list">
+        </ul>
     </div>
 
     <script src="script.js" charset="utf-8"></script>

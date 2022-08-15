@@ -5,11 +5,36 @@
 
 body {
   background-color: black;
+  margin-top: 25px;
+  margin-left: 25px;
 }
 
-input {
+div {
+  font-size: 11pt;
+}
+
+input, select {
   background-color: #222222;
   border-radius: 5px;
   border-style: solid;
-  border-width: 0.5px;
+  border-width: 2px;
+  border-color: #222222;
+  font-size: 11pt;
 }
+
+#warning {
+  margin-top: 11pt;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* li {
+  margin-left: 0;
+} */
+
+/* input:checked {
+  text-decoration: line-through;
+} */

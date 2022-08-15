@@ -1,9 +1,9 @@
 class Task {
-    constructor(name, dueDate, priority) { //dont pass isComplete
+    constructor(name, dueDate, priority, isComplete) { //dont pass isComplete
         this.name = name;   //task name, string
         this.dueDate = dueDate; //string 'yyyy-mm-dd'
         this.priority = priority; //integer 1-3, 1 is highest priority
-        //this.isComplete = false; //boolean initializes as false and changes to true when user checks box
+        this.isComplete = false; //boolean initializes as false and changes to true when user checks box
     }
 
     toString() {
@@ -11,96 +11,90 @@ class Task {
     }
 }
 
-let taskArray = [];
+let tasks = [];
 
-function newObj(name_, dueDate_, priority_) {
+function newTask(name_, dueDate_, priority_) {
     let warning = document.querySelector('#warning')
     if (name_ === '') {
         warning.innerHTML = 'Enter a task name.';
     } else {
-        
-        let newTask = new Task(name_, dueDate_, priority_)
-       
+        let newTask = new Task(name_, dueDate_, priority_, false)
         // user input matches a task in the array
-        for (let i=0; i<taskArray.length; i++) {
-            if (newTask.toString() === taskArray[i].toString()) {
+        for (let i=0; i<tasks.length; i++) {
+            if (newTask.toString() === tasks[i].toString()) {
                 warning.innerHTML = 'Task already in list.';
                 return;
             }
         }
-
         warning.innerHTML = ''
-        taskArray.push(newTask);
+        tasks.push(newTask);
         // check whether all input fields match a task already in the array
     }
-    
 
 }
 
+function listRefresh() {
 
-function tableRefresh() {       
-        document.querySelector('tbody').remove();
-        let refresh = document.createElement('tbody');
-        document.querySelector('table').appendChild(refresh);
-
-    for (let i = 0; i < taskArray.length; i++) {
-        let newRow = document.createElement('tr');
-        newRow.id = ('data-row' + i);
-        newRow.addEventListener('click', removeItem);  // adds event handler to each new row
-        document.querySelector('tbody').appendChild(newRow);
-
-    
-        let newName = document.createElement('td');
-        newName.innerHTML = taskArray[i].name;
-        document.querySelector('#data-row' + i).appendChild(newName);
-
-        let newDate = document.createElement('td');
-        newDate.innerHTML = taskArray[i].dueDate;
-        document.querySelector('#data-row' + i).appendChild(newDate);
-
-
-        let newPriority = document.createElement('td');
-        newPriority.innerHTML = taskArray[i].priority;
-
-        document.querySelector('#data-row' + i).appendChild(newPriority);
+    let taskList = document.getElementById('task-list');
+    let tasks_ = document.querySelectorAll('#task-list li');
+    for (let i=0; i<tasks_.length; i++) {
+         taskList.removeChild(tasks_[i]);
     }
 
+    // add items from tasks
+    for (let i=0; i<tasks.length; i++) {
+        let newListItem = document.createElement('li');
+        if (tasks[i].isComplete) {
+            newListItem.innerHTML = '<input type="checkbox" checked> ' + tasks[i].toString();
+            newListItem.textDecoration = 'line-through';
+        } else {
+            newListItem.innerHTML = '<input type="checkbox"> ' + tasks[i].toString();
+            newListItem.textDecoration = 'none';
+        }
+        newListItem.addEventListener('change', changeStatus);
+        document.querySelector('#task-list').appendChild(newListItem);
+    }
 }
+
 
 //Removes the line item clicked in the table
-function removeItem(e){
+function changeStatus(e){
 
     //iterate through tasks
-    for (let i = 0; i < taskArray.length; i++) {
-
-        //get a string for target row to compare to each task in taskArray
-        let rowTaskString = '';
-        for (let j=0; j<3; j++) {
-            if (j<2) {
-                rowTaskString += e.currentTarget.children[j].innerHTML + ',';
-            } else {
-                rowTaskString += e.currentTarget.children[j].innerHTML;
+    for (let i = 0; i < tasks.length; i++) {
+        // whichever item is clicked is removed from array
+        let listItemTask = e.currentTarget.innerHTML.substring(0, 32);
+        if (listItemTask === '<input type="checkbox" checked> ') {
+            listItemTask = e.currentTarget.innerHTML.substring(32);
+        } else {
+            listItemTask = e.currentTarget.innerHTML.substring(24);
+        }
+        if (listItemTask === tasks[i].toString()) {
+            if (tasks[i].isComplete) {
+                tasks[i].isComplete = false;
+                e.currentTarget.style.textDecoration = 'none'; 
+            } 
+            else {
+                tasks[i].isComplete = true;
+                e.currentTarget.style.textDecoration = 'line-through';
             }
         }
-        console.log(rowTaskString + ' ; ' + taskArray[i].toString());
-        if (rowTaskString === taskArray[i].toString()) {
-            taskArray.splice(i, 1);
-            e.currentTarget.remove();
-        }
     }
-    console.log(taskArray);
+    sortTasks(tasks);
+    console.log(tasks);
+    
 }
 
 function addTask() {
-    let addName = document.querySelector('#task-name').value;
-    let addDate = document.querySelector('#due-date').value;
-    let addPriority = document.querySelector('#priority').value;
+    let name_ = document.querySelector('#task-name').value;
+    let date_ = document.querySelector('#due-date').value;
+    let priority_ = document.querySelector('#priority').value;
     
-    newObj(addName, addDate, addPriority);
-    sortTasks(taskArray);
-    tableRefresh();
+    newTask(name_, date_, priority_, false);
+    sortTasks(tasks);
+    listRefresh();
     fieldReset();
-    console.log(taskArray);
+    console.log(tasks);
 }
 
 function fieldReset() {
@@ -109,6 +103,17 @@ function fieldReset() {
     document.querySelector('#priority').value = 3;
 }
 
+/* sort tasks */
+function compareCompletion(task1, task2) {
+    if (task1.isComplete < task2.isComplete) {  //task1 is incomplete and task2 is complete
+        return -1;                              //task1 sorted before task2
+    } 
+    if (task1.isComplete > task2.isComplete) {  //task1 is incomplete and task2 is complete
+        return 1;                               //task1 sorted after task2
+    }
+    return 0;    
+
+}
 
 function comparePriority(task1, task2) {
     if (task1.priority < task2.priority) {      //task1 higher priority
@@ -140,8 +145,10 @@ function compareName(task1, task2) {
     return 0;                                   //same name, keep original order
 }
 
-function sortTasks(taskArrayy) {
-    taskArrayy.sort(compareName);       //name is lowest level of sort order
-    taskArrayy.sort(compareDueDate);
-    taskArrayy.sort(comparePriority);   //priority is highest level of sort order
+function sortTasks(tasks_) {
+    tasks_.sort(compareName);       //name is lowest level of sort order
+    tasks_.sort(compareDueDate);
+    tasks_.sort(comparePriority);   
+    tasks_.sort(compareCompletion);   //completion is highest level of sort order
 }
+/**/
